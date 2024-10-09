@@ -1,6 +1,7 @@
 import pandas as pd
 from PyQt5 import QtWidgets, QtCore
 from app_state import AppState
+from datetime import timedelta
 
 class LoadMoviesWindow(QtWidgets.QWidget):
     def __init__(self):
@@ -19,9 +20,7 @@ class LoadMoviesWindow(QtWidgets.QWidget):
         self.load_file_button.setStyleSheet("font-size: 18px")
         self.load_file_button.clicked.connect(self.load_excel_file)
 
-        # Aggiungi pulsante al layout
         layout.addWidget(self.load_file_button)
-
         self.setLayout(layout)
 
     def load_excel_file(self):
@@ -54,14 +53,28 @@ class SelectMoviesWindow(QtWidgets.QWidget):
         self.setWindowTitle('Seleziona i Film per la Vendita')
         self.setGeometry(0, 0, 800, 600)
 
-        layout = QtWidgets.QVBoxLayout()
+        # Layout principale con scroll
+        scroll_area = QtWidgets.QScrollArea(self)
+        scroll_area.setWidgetResizable(True)
+        scroll_content = QtWidgets.QWidget()
+        scroll_layout = QtWidgets.QVBoxLayout(scroll_content)
 
         # Creare la lista di checkbox per ogni film
         self.checkboxes = []
         for index, row in self.movies_df.iterrows():
-            checkbox = QtWidgets.QCheckBox(f"{row['AUDITORIUM']} - {row['PLAYLIST']}", self)
+            # Calcolare FEATURE_TIME meno 10 minuti
+            feature_time = pd.to_datetime(row['FEATURE_TIME']) - timedelta(minutes=10)
+            checkbox_text = f"{row['AUDITORIUM']} - {row['PLAYLIST']} - Inizio intervallo: {feature_time.strftime('%Y-%m-%d %H:%M:%S')}"
+            checkbox = QtWidgets.QCheckBox(checkbox_text, self)
             self.checkboxes.append(checkbox)
-            layout.addWidget(checkbox)
+            scroll_layout.addWidget(checkbox)
+
+        # Imposta il contenuto scrollabile
+        scroll_area.setWidget(scroll_content)
+
+        # Layout principale
+        main_layout = QtWidgets.QVBoxLayout(self)
+        main_layout.addWidget(scroll_area)
 
         # Pulsante per selezionare tutti i film
         self.select_all_button = QtWidgets.QPushButton('Seleziona Tutti', self)
@@ -71,11 +84,11 @@ class SelectMoviesWindow(QtWidgets.QWidget):
         self.save_selection_button = QtWidgets.QPushButton('Salva Selezione', self)
         self.save_selection_button.clicked.connect(self.save_selection)
 
-        # Aggiungi i pulsanti al layout
-        layout.addWidget(self.select_all_button)
-        layout.addWidget(self.save_selection_button)
+        # Aggiungi i pulsanti al layout principale (fuori dallo scroll)
+        main_layout.addWidget(self.select_all_button)
+        main_layout.addWidget(self.save_selection_button)
 
-        self.setLayout(layout)
+        self.setLayout(main_layout)
 
     def select_all(self):
         # Seleziona tutti i checkbox

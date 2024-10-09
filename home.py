@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 from user_management import UserManagementWindow
+from load_movies import LoadMoviesWindow
 
 class HomeWindow(QtWidgets.QWidget):
     def __init__(self, role):
@@ -8,9 +9,8 @@ class HomeWindow(QtWidgets.QWidget):
         self.init_ui()
 
     def init_ui(self):
-        # Impostazioni della finestra per tablet
         self.setWindowTitle('Yumtrek Home')
-        self.setGeometry(0, 0, 800, 600)  # Finestra più grande per tablet
+        self.setGeometry(0, 0, 800, 600)
 
         layout = QtWidgets.QVBoxLayout()
 
@@ -18,6 +18,7 @@ class HomeWindow(QtWidgets.QWidget):
         self.load_movies_button = QtWidgets.QPushButton('Carica Film', self)
         self.load_movies_button.setFixedHeight(70)
         self.load_movies_button.setStyleSheet("font-size: 18px")
+        self.load_movies_button.clicked.connect(self.open_load_movies)
 
         self.load_yumtrek_button = QtWidgets.QPushButton('Carica Yumtrek', self)
         self.load_yumtrek_button.setFixedHeight(70)
@@ -36,6 +37,7 @@ class HomeWindow(QtWidgets.QWidget):
             self.add_user_button = QtWidgets.QPushButton('Aggiungi User', self)
             self.add_user_button.setFixedHeight(70)
             self.add_user_button.setStyleSheet("font-size: 18px")
+            self.add_user_button.clicked.connect(self.open_user_management)
 
             self.add_product_button = QtWidgets.QPushButton('Aggiungi Prodotto', self)
             self.add_product_button.setFixedHeight(70)
@@ -49,9 +51,11 @@ class HomeWindow(QtWidgets.QWidget):
             layout.addWidget(self.add_product_button)
             layout.addWidget(self.close_register_button)
 
-            self.add_user_button.clicked.connect(self.open_user_management)
-
         self.setLayout(layout)
+
+    def open_load_movies(self):
+        self.load_movies_window = LoadMoviesWindow()
+        self.load_movies_window.show()
 
     def open_user_management(self):
         self.user_management_window = UserManagementWindow()
