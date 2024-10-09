@@ -1,4 +1,19 @@
+# Ignora il database locale
+yumtrek.db
+
+# Ignora le cartelle di build ed eseguibili
+build/
+dist/
+venv/
 .venv
-build
-dist
-*.log*
+
+# Ignora file temporanei di sistema
+.DS_Store
+Thumbs.db
+
+# Ignora file di log
+*.log
+
+# Ignora file di configurazione degli editor di testo
+.vscode/
+.idea/
